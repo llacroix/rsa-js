@@ -343,17 +343,29 @@ function pollard(number) {
   }
 
   var number = new BigNumber(number)
-    , Xi = new BigNumber(2)
-    , Yi = new BigNumber(2)
-    , i = 0
+    , MAX_PRECISION = 10000000000000000
+    , INT_RAND = Math.floor(Math.random() * MAX_PRECISION).toString()
+    , Xi = number.minus(2).divToInt(MAX_PRECISION).times(INT_RAND).plus(1)
+    , Yi = new BigNumber(1)
+    , i = new BigNumber(0)
     , NOD = new BigNumber(1)
+    , stage = new BigNumber(2)
 
   while (NOD.eq(1)) {
-    console.log(NOD.toString(), Xi.toString(), Yi.toString())
-    Xi = F(Xi)
-    Yi = F(F(Yi))
+
+    if (i.eq(stage)) {
+      Yi = Xi
+      stage = stage.times(BigNumber.TWO)
+      console.log(NOD.toString(), Xi.toString(), Yi.toString(), stage.toString())
+    }
+
+    Xi = Xi.pow(BigNumber.TWO).plus(BigNumber.ONE).mod(number)
+    i = i.plus(BigNumber.ONE)
+
     NOD = RAE(Xi.minus(Yi), number).abs()
   }
+
+  console.log(NOD.toString(), Xi.toString(), Yi.toString(), stage.toString())
 
   return [NOD, number.divToInt(NOD)]
 }
@@ -365,4 +377,5 @@ module.exports = {
 , setRandomNumber: getRandomPrime
 , getRandomNumber: getRandomNumber
 , pollard: pollard
+, xgcd: xgcd
 }

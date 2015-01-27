@@ -1,8 +1,11 @@
 var assert = require("assert")
   , crypto = require("../crypto")
   , rsa = require("../rsa")
+  , decode = require("../decode")
 
 describe('Can genrate a key', function(){
+  this.timeout(2000000)
+
   it('convert binary number to number', function(){
     wallet = new rsa.GenerateKeys(32)
 
@@ -24,5 +27,29 @@ describe('Can genrate a key', function(){
 
     assert.equal(text, textDecoded)
     assert.notEqual(encoded, decoded)
+  })
+
+  it("can crack a coded data 16bit", function () {
+
+    wallet = new rsa.GenerateKeys(16)
+
+    encoded = crypto.modPow(196252, wallet.E, wallet.N)
+    decoded = crypto.modPow(encoded, wallet.D, wallet.N)
+
+    data = decode.crack(wallet.N, wallet.E, encoded)
+
+    assert.equal(data, "Год")
+  })
+
+  it("can crack a coded data 32bit", function () {
+
+    wallet = new rsa.GenerateKeys(32)
+
+    encoded = crypto.modPow(196252, wallet.E, wallet.N)
+    decoded = crypto.modPow(encoded, wallet.D, wallet.N)
+
+    data = decode.crack(wallet.N, wallet.E, encoded)
+
+    assert.equal(data, "Год")
   })
 })
