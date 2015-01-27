@@ -241,10 +241,128 @@ function getRandomPrime(length, iterations) {
   return R
 }
 
+function IsAPowerOfTwo(num, Twos) {
+  var i = 0
+    , num = new BigNumber(num)
+    , num2 = null
+
+  for (i=0; i<Twos.length; i++) {
+    num2 = Twos[i]
+
+    if (num.lt(num2)) {
+      return false;
+    } else if (num.eq(num2)) {
+      Twos.splice(i)
+      return true;
+    }
+  }
+
+  return false;
+}
+
+/*
+function pollard(number) {
+  console.log("Pollard")
+
+  var N = new BigNumber(number)
+    , random = Math.random() * (Math.pow(2, 32) - 2)
+    , Xi = new BigNumber(Math.floor(random) + 2)
+    , Yi = BigNumber.ONE
+    , two = new BigNumber(1)
+    , NOD = null
+    , T = null
+    , Twos = []
+    , divisorFound = false
+    //флаг встречена новая степень двойки тру потому как 1 это степени двойки
+    , NextIterationIsAPowerOfTwo = true
+    , iteration = 2
+    , xi_seen = []
+
+  console.log("random", random)
+
+  while (two.lt(N)) {
+    console.log("Twos")
+    Twos.push(two)
+    two = two.times(2);
+  }
+
+
+  while (!divisorFound) {
+    console.log("divisor", Xi.toNumber(), Yi.toNumber())
+
+    if (NextIterationIsAPowerOfTwo) {
+      console.log("Power of two")
+      Yi = new BigNumber(Xi)
+    }
+
+    NextIterationIsAPowerOfTwo = IsAPowerOfTwo(iteration, Twos)
+
+    Xi = (Xi.times(Xi).minus(BigNumber.ONE)).mod(N)
+    T = Xi.gt(Yi) ? Xi.minus(Yi) : Yi.minus(Xi)
+    xi_seen.push(Xi)
+
+    console.log("T and N", T.toNumber(), N.toNumber())
+
+    NOD = RAE(T, N);
+
+    console.log("NOD: " , NOD.toNumber())
+
+    //т.к. числа длины 1 это только ноль и единица, а 0 не может быть наименьшим общим делителем
+    if (!NOD.eq(BigNumber.ONE)) {
+      return [NOD, N.divToInt(NOD)]
+    }
+
+    if (inside(Xi, xi_seen)) {
+      return [1, N]
+    }
+
+    iteration++;
+  }
+
+  return null;
+}*/
+
+
+function inside(value, list) {
+  console.log("Checking value")
+
+  var found = 0
+
+  list.forEach(function (val) {
+    if (val.eq(value)) {
+      found++
+    }
+  })
+
+  return found >= 2
+}
+
+function pollard(number) {
+  function F(x) {
+    return x.pow(2).plus(1).mod(number)
+  }
+
+  var number = new BigNumber(number)
+    , Xi = new BigNumber(2)
+    , Yi = new BigNumber(2)
+    , i = 0
+    , NOD = new BigNumber(1)
+
+  while (NOD.eq(1)) {
+    console.log(NOD.toString(), Xi.toString(), Yi.toString())
+    Xi = F(Xi)
+    Yi = F(F(Yi))
+    NOD = RAE(Xi.minus(Yi), number).abs()
+  }
+
+  return [NOD, number.divToInt(NOD)]
+}
+
 module.exports = {
   RAE: RAE
 , modPow: modPow
 , reverseNumber: reverseNumber
 , setRandomNumber: getRandomPrime
 , getRandomNumber: getRandomNumber
+, pollard: pollard
 }

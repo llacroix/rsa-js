@@ -2,8 +2,9 @@ var assert = require("assert")
   , crypto = require("../crypto")
 
 describe('Big numbers', function(){
-  it('NOD', function(){
+  it('Greatest common divisor', function(){
     assert.equal(crypto.RAE(32, 16).toNumber(), 16)
+    assert.equal(crypto.RAE(16, 32).toNumber(), 16)
     assert.equal(crypto.RAE(1072, 462).toNumber(), 2)
     assert.equal(crypto.RAE(3, 5).toNumber(), 1)
     assert.equal(crypto.RAE(17, 31).toNumber(), 1)
@@ -46,5 +47,11 @@ describe('Big numbers', function(){
   it("Should be able to calculate a big random number prime",function () {
       random = crypto.setRandomNumber(5, 4)
       assert.equal(random.toString(2).length, 5)
+  })
+
+  it("should be able to calculate a pollard number",function () {
+      qp = crypto.pollard(8051)
+      assert.equal(qp[0], 97)
+      assert.equal(qp[1], 83)
   })
 })
