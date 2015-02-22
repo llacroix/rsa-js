@@ -343,8 +343,10 @@ function pollard(number) {
   }
 
   var number = new BigNumber(number)
-    , MAX_PRECISION = 10000000000000000
-    , INT_RAND = Math.floor(Math.random() * MAX_PRECISION).toString()
+    , MAX_PRECISION = new BigNumber(10000000000000000)
+    , rand = new BigNumber(Math.random().toString())
+    //, INT_RAND = Math.floor(Math.random() * MAX_PRECISION).toString()
+    , INT_RAND = rand.times(MAX_PRECISION).divToInt(1)
     , Xi = number.minus(2).divToInt(MAX_PRECISION).times(INT_RAND).plus(1)
     , Yi = new BigNumber(1)
     , i = new BigNumber(0)
@@ -358,9 +360,11 @@ function pollard(number) {
       stage = stage.times(BigNumber.TWO)
       console.log(NOD.toString(), Xi.toString(), Yi.toString(), stage.toString())
     }
+    
 
     Xi = Xi.pow(BigNumber.TWO).plus(BigNumber.ONE).mod(number)
     i = i.plus(BigNumber.ONE)
+    //Yi = F(F(Yi))
 
     NOD = RAE(Xi.minus(Yi), number).abs()
   }
