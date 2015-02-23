@@ -35,7 +35,8 @@ m.getGenerator = function (k, p) {
   for (i = 1; i<p; i++) {
     ti = new BigNumber(i.toString())
     if (m.checkPrimitiveRoot(ti, k, p)) {
-      roots.push(ti)
+      //roots.push(ti)
+      return [ti]
     }
   }
 

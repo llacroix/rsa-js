@@ -14,11 +14,11 @@ var net = require('net')
 m.rl = rl
 
 m.getRandom = function () {
-  return crypto.setRandomNumber(6, 5)
+  return crypto.setRandomNumber(256, 5)
 }
 
 m.getPublicPair = function () {
-  var k = crypto.setRandomNumber(16, 5)
+  var k = crypto.setRandomNumber(256, 5)
     , p = d.getPrime(k)
     , g = d.getGenerator(k, p)[0]
 
@@ -86,14 +86,15 @@ m.dh = function (base, random, prime) {
   random = new BigNumber(random)
   prime = new BigNumber(prime)
 
-  result = base.pow(random)
-  shared_key = result.mod(prime)
+  //result = base.pow(random)
+  //shared_key = result.mod(prime)
+  shared_key = crypto.modPow(base, random, prime)
 
   console.log("DH: "
     , base.toNumber()
     , random.toNumber()
     , prime.toNumber()
-    , result.toNumber()
+    //, result.toNumber()
     , shared_key.toNumber())
 
   return shared_key
